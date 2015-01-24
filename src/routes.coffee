@@ -1,22 +1,21 @@
 BaseController = null
 isConfigured = false
 
-@Routes =
+Routes =
 
   config: (args) ->
     if isConfigured
       throw new Error('Routes already configured')
 
-    BaseController = RouteController.extend
+    BaseController = args.BaseController ? RouteController.extend
       onBeforeAction: ->
         return unless @ready()
-        args.onBeforeAction.call(@)
-      # Don't render until we're ready (waitOn) resolved
       action: -> @render() if @ready()
-      waitOn: -> Meteor.subscribe('userData')
 
-    Router.onBeforeAction ->
+    onBeforeAction = ->
       Router.initLastPath()
+      (args.onBeforeAction ? this.next)()
+    Router.onBeforeAction(onBeforeAction)
 
     # Allow storing the last route visited and switching back.
     origGoFunc = Router.go
@@ -58,23 +57,24 @@ isConfigured = false
 
     isConfigured = true
 
+  crudRoute: (collection, args) ->
+    args = _.extend({}, args)
 
-  crudRoute: (collectionName, controller) ->
-    unless BaseController?
-      throw new Error('Call config() first')
+    controller = args.controller ? BaseController
+    unless controller?
+      throw new Error('No controller provided')
 
-    controller ?= BaseController
-    collectionId = Strings.firstToLowerCase(collectionName)
-    singularName = Strings.singular(collectionId)
-    itemRoute = singularName + 'Item'
-    editRoute = singularName + 'Edit'
-    formName = singularName + 'Form'
-    console.debug('crud routes', itemRoute, editRoute, formName)
+    collectionId = args.collectionId ? Collections.getName(collection)
+    singularName = args.singularName ? Strings.singular(collectionId)
+    createRoute = args.createRoute ? singularName + 'Create'
+    editRoute = args.editRoute ? singularName + 'Edit'
+    formName = args.formName ? singularName + 'Form'
+    console.debug('crud routes', createRoute, editRoute, formName)
     Router.route collectionId,
       path: '/' + collectionId, controller: controller, template: collectionId
-    Router.route itemRoute,
+    Router.route createRoute,
       path: '/' + collectionId + '/create', controller: controller, template: formName, data: -> {}
     Router.route editRoute,
-      # Reuse the itemRoute for editing.
+      # Reuse the createRoute for editing.
       path: '/' + collectionId + '/:_id/edit', controller: controller, template: formName,
-      data: -> {doc: window[collectionName].findOne(@params._id)}
+      data: -> {doc: collection.findOne(@params._id)}
