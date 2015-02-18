@@ -4,12 +4,15 @@ isConfigured = false
 Routes =
 
   config: (args) ->
+    args = _.extend({}, args)
+
     if isConfigured
       throw new Error('Routes already configured')
 
     BaseController = args.BaseController ? RouteController.extend
       onBeforeAction: ->
         return unless @ready()
+        @next()
       action: -> @render() if @ready()
 
     onBeforeAction = ->
@@ -78,3 +81,6 @@ Routes =
       # Reuse the createRoute for editing.
       path: '/' + collectionId + '/:_id/edit', controller: controller, template: formName,
       data: -> {doc: collection.findOne(@params._id)}
+
+  getBaseController: -> BaseController
+
