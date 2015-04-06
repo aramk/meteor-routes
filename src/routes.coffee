@@ -20,6 +20,10 @@ Routes =
       (args.onBeforeAction ? this.next)()
     Router.onBeforeAction(onBeforeAction)
 
+    reactiveCurrentName = new ReactiveVar(null)
+    Router.onAfterAction ->
+      reactiveCurrentName.set(Router.getCurrentName())
+
     # Allow storing the last route visited and switching back.
     origGoFunc = Router.go
     _lastPath = null
@@ -40,7 +44,8 @@ Routes =
       current = Router.getCurrentPath()
       Router.setLastPath(current.path, current.params)
 
-    Router.getCurrentName = -> Router.current().route.getName()
+    Router.getCurrentName = -> Router.current().route?.getName()
+    Router.getReactiveCurrentName = -> reactiveCurrentName.get()
     Router.getCurrentPath = ->
       current = Router.current()
       # Remove the host prefix from the path, which is sometimes present.
