@@ -29,7 +29,7 @@ Routes =
     _lastPath = null
     Router.setLastPath = (path, params) ->
       _lastPath = {path: path, params: params}
-      console.debug('last router path', _lastPath)
+      Logger.debug('Last router path', _lastPath)
     Router.getLastPath = -> _lastPath
     Router.goToLastPath = ->
       currentPath = Router.getCurrentPath()
@@ -77,7 +77,7 @@ Routes =
     createRoute = args.createRoute ? singularName + 'Create'
     editRoute = args.editRoute ? singularName + 'Edit'
     formName = args.formName ? singularName + 'Form'
-    console.debug('crud routes', createRoute, editRoute, formName)
+    Logger.debug('CRUD Routes', createRoute, editRoute, formName)
     Router.route collectionId,
       path: '/' + collectionId, controller: controller, template: collectionId
     Router.route createRoute,
