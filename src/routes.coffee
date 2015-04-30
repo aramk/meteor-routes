@@ -17,7 +17,7 @@ Routes =
 
     onBeforeAction = ->
       Router.initLastPath()
-      (args.onBeforeAction ? this.next)()
+      (args.onBeforeAction ? @next).call(@)
     Router.onBeforeAction(onBeforeAction)
 
     reactiveCurrentName = new ReactiveVar(null)
