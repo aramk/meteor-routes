@@ -81,11 +81,13 @@ Routes =
     Router.route collectionId,
       path: '/' + collectionId, controller: controller, template: collectionId
     Router.route createRoute,
-      path: '/' + collectionId + '/create', controller: controller, template: formName, data: -> {}
+      path: '/' + collectionId + '/create', controller: controller, template: formName,
+      data: -> Setter.merge({}, args.data, args.createData)
     Router.route editRoute,
       # Reuse the createRoute for editing.
       path: '/' + collectionId + '/:_id/edit', controller: controller, template: formName,
-      data: -> {doc: collection.findOne(@params._id)}
+      data: ->
+        Setter.merge({doc: collection.findOne(@params._id)}, args.data, args.editData)
 
   getBaseController: -> BaseController
 
