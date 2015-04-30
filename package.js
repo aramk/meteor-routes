@@ -11,7 +11,7 @@ Package.onUse(function (api) {
   api.use([
     'coffeescript',
     'underscore',
-    'reactive-var',
+    'reactive-var@1.0.5',
     'aramk:q@1.0.1',
     'aramk:utility@0.8.3',
     'iron:router@1.0.7'
