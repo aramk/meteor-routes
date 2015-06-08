@@ -44,7 +44,7 @@ Routes =
       current = Router.getCurrentPath()
       Router.setLastPath(current.path, current.params)
 
-    Router.getCurrentName = -> Router.current().route?.getName()
+    Router.getCurrentName = -> Router.current()?.route?.getName()
     Router.getReactiveCurrentName = -> reactiveCurrentName.get()
     Router.getCurrentPath = ->
       current = Router.current()
