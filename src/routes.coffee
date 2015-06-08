@@ -55,8 +55,10 @@ Routes =
       }
 
     # When switching, remember the last route.
-    Router.go = ->
-      Router.setLastPathAsCurrent()
+    Router.go = (routeNameOrPath) ->
+      current = Router.getCurrentPath()
+      unless routeNameOrPath == current.path || Router.getCurrentName() == routeNameOrPath
+        Router.setLastPathAsCurrent()
       origGoFunc.apply(@, arguments)
 
     Router.initLastPath = ->
