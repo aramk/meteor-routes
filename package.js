@@ -15,7 +15,7 @@ Package.onUse(function (api) {
     'aramk:q@1.0.1',
     'aramk:utility@0.8.3',
     'iron:router@1.0.7'
-    ],'client');
+  ], 'client');
   api.imply('iron:router');
   api.export('Routes', 'client');
   api.addFiles([
