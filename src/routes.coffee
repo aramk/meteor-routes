@@ -1,48 +1,17 @@
 BaseController = null
-isConfigured = false
 
 Routes =
 
   config: (args) ->
     args = _.extend({}, args)
 
-    if isConfigured
-      throw new Error('Routes already configured')
+    if @_isConfigured then throw new Error('Routes already configured')
 
     BaseController = args.BaseController ? RouteController.extend
       onBeforeAction: ->
         return unless @ready()
         @next()
       action: -> @render() if @ready()
-
-    onBeforeAction = ->
-      Router.initLastPath()
-      (args.onBeforeAction ? @next).call(@)
-    Router.onBeforeAction(onBeforeAction)
-
-    reactiveCurrentName = new ReactiveVar(null)
-    Router.onAfterAction ->
-      reactiveCurrentName.set(Router.getCurrentName())
-
-    # Allow storing the last route visited and switching back.
-    origGoFunc = Router.go
-    _lastPath = null
-    Router.setLastPath = (path, params) ->
-      _lastPath = {path: path, params: params}
-      Logger.debug('Last router path', _lastPath)
-    Router.getLastPath = -> _lastPath
-    Router.goToLastPath = ->
-      currentPath = Router.getCurrentPath()
-      lastPath = Router.getLastPath()
-      if lastPath? && lastPath.path? && lastPath.path != currentPath.path
-        origGoFunc.call(Router, lastPath.path, lastPath.params)
-        true
-      else
-        false
-
-    Router.setLastPathAsCurrent = ->
-      current = Router.getCurrentPath()
-      Router.setLastPath(current.path, current.params)
 
     Router.getCurrentName = -> Router.current()?.route?.getName()
     Router.getReactiveCurrentName = -> reactiveCurrentName.get()
@@ -54,18 +23,26 @@ Routes =
         params: current?.params
       }
 
-    # When switching, remember the last route.
-    Router.go = (routeNameOrPath) ->
-      current = Router.getCurrentPath()
-      unless routeNameOrPath == current.path || Router.getCurrentName() == routeNameOrPath
-        Router.setLastPathAsCurrent()
-      origGoFunc.apply(@, arguments)
+    reactiveCurrentName = new ReactiveVar(null)
+    _lastPath = null
+    _currentPath = null
+    Tracker.autorun ->
+      newPath = Router.getCurrentPath()
+      unless _currentPath? && newPath? && _currentPath.path == newPath.path
+        _lastPath = _currentPath
+        _currentPath = newPath
+      reactiveCurrentName.set(Router.getCurrentName())
 
-    Router.initLastPath = ->
-      unless _lastPath?
-        Router.setLastPathAsCurrent()
+    Router.getLastPath = -> _lastPath
+    Router.goToLastPath = ->
+      lastPath = Router.getLastPath()
+      if lastPath
+        Router.go(lastPath.path, lastPath.params)
+        true
+      else
+        false
 
-    isConfigured = true
+    @_isConfigured = true
 
   crudRoute: (collection, args) ->
     args = _.extend({}, args)
