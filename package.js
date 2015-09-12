@@ -19,6 +19,6 @@ Package.onUse(function (api) {
   api.imply('iron:router');
   api.export('Routes', 'client');
   api.addFiles([
-    'src/routes.coffee'
+    'src/Routes.coffee'
   ], 'client');
 });
