@@ -57,8 +57,10 @@ Routes =
     editRoute = args.editRoute ? singularName + 'Edit'
     formName = args.formName ? singularName + 'Form'
     Logger.debug('CRUD Routes', createRoute, editRoute, formName)
-    Router.route collectionId,
-      path: '/' + collectionId, controller: controller, template: collectionId
+    # Avoid creating a duplicate route for the collection if one already exists.
+    unless Router.routes[collectionId]?
+      Router.route collectionId,
+        path: '/' + collectionId, controller: controller, template: collectionId
     Router.route createRoute,
       path: '/' + collectionId + '/create', controller: controller, template: formName,
       data: -> Setter.merge({}, args.data, args.createData)
