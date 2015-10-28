@@ -44,6 +44,8 @@ Routes =
 
     @_isConfigured = true
 
+  isConfigured: -> @_isConfigured
+
   crudRoute: (collection, args) ->
     args = _.extend({}, args)
 
