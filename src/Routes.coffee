@@ -11,7 +11,10 @@ Routes =
       onBeforeAction: ->
         return unless @ready()
         @next()
-      action: -> @render() if @ready()
+      action: ->
+        if @ready()
+          console.log('render')
+          @render()
 
     Router.getCurrentName = -> Router.current()?.route?.getName()
     Router.getReactiveCurrentName = -> reactiveCurrentName.get()
@@ -59,18 +62,25 @@ Routes =
     editRoute = args.editRoute ? singularName + 'Edit'
     formName = args.formName ? singularName + 'Form'
     Logger.debug('CRUD Routes', createRoute, editRoute, formName)
+    
     # Avoid creating a duplicate route for the collection if one already exists.
     unless Router.routes[collectionId]?
       Router.route collectionId,
         path: '/' + collectionId, controller: controller, template: collectionId
+
     Router.route createRoute,
       path: '/' + collectionId + '/create', controller: controller, template: formName,
-      data: -> Setter.merge({}, args.data, args.createData)
+      action: ->
+        # Prevent re-rendering things outside the {{> yield}} by providing the data here.
+        @render formName, data: -> Setter.merge({}, args.data, args.createData)
+    
     Router.route editRoute,
       # Reuse the createRoute for editing.
       path: '/' + collectionId + '/:_id/edit', controller: controller, template: formName,
-      data: ->
-        Setter.merge({doc: collection.findOne(_id: @params._id)}, args.data, args.editData)
+      action: ->
+        # Prevent re-rendering things outside the {{> yield}} by providing the data here.
+        @render formName, data: ->
+            Setter.merge({doc: collection.findOne(_id: @params._id)}, args.data, args.editData)
 
   getBaseController: -> BaseController
 
