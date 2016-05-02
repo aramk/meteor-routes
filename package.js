@@ -1,7 +1,7 @@
 // Meteor package definition.
 Package.describe({
   name: 'aramk:routes',
-  version: '0.3.0',
+  version: '0.3.1',
   summary: 'Convenient utilities for setting up routes for a Meteor app.',
   git: 'https://github.com/aramk/meteor-routes.git'
 });
