@@ -9,7 +9,7 @@ Package.describe({
 Package.onUse(function (api) {
   api.versionsFrom('METEOR@1.6.1');
   api.use([
-    'coffeescript',
+    'coffeescript@1.2.3',
     'underscore',
     'reactive-var@1.0.5',
     'aramk:q@1.0.1',
