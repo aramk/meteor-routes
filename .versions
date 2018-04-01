@@ -15,7 +15,7 @@ caching-compiler@1.0.4
 caching-html-compiler@1.0.6
 callback-hook@1.0.8
 check@1.2.1
-coffeescript@1.0.17
+coffeescript@2.2.1_1
 cosmos:browserify@0.5.1
 ddp@1.2.5
 ddp-client@1.2.7
