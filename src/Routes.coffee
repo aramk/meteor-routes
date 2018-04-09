@@ -69,7 +69,10 @@ Routes =
       path: '/' + collectionId + '/create', controller: controller, template: formName,
       action: ->
         # Prevent re-rendering things outside the {{> yield}} by providing the data here.
-        @render formName, data: -> Setter.merge({}, args.data, args.createData)
+        @render formName, data: ->
+          data = Setter.merge({}, args.data, args.createData)
+          args.onCreateData?.call(@, data)
+          return data
 
     Router.route editRoute,
       # Reuse the createRoute for editing.
@@ -77,6 +80,8 @@ Routes =
       action: ->
         # Prevent re-rendering things outside the {{> yield}} by providing the data here.
         @render formName, data: ->
-            Setter.merge({doc: collection.findOne(_id: @params._id)}, args.data, args.editData)
+          data = Setter.merge({doc: collection.findOne(_id: @params._id)}, args.data, args.editData)
+          args.onEditData?.call(@, data)
+          return data
 
   getBaseController: -> BaseController
