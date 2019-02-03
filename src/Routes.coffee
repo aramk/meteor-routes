@@ -55,17 +55,20 @@ Routes =
 
     collectionId = args.collectionId ? Collections.getName(collection)
     singularName = args.singularName ? Strings.singular(collectionId)
-    createRoute = args.createRoute ? singularName + 'Create'
-    editRoute = args.editRoute ? singularName + 'Edit'
+    
+    createRouteName = singularName + 'Create'
+    editRouteName = singularName + 'Edit'
+    if Types.isString(args.createRoute) then createRouteName = args.createRoute
+    if Types.isString(args.editRoute) then editRouteName = args.editRoute
+    
     formName = args.formName ? singularName + 'Form'
-    Logger.debug('CRUD Routes', createRoute, editRoute, formName)
 
     # Avoid creating a duplicate route for the collection if one already exists.
     unless Router.routes[collectionId]?
       Router.route collectionId,
         path: '/' + collectionId, controller: controller, template: collectionId
 
-    Router.route createRoute,
+    createRoute =
       path: '/' + collectionId + '/create', controller: controller, template: formName,
       action: ->
         # Prevent re-rendering things outside the {{> yield}} by providing the data here.
@@ -74,7 +77,7 @@ Routes =
           args.onCreateData?.call(@, data)
           return data
 
-    Router.route editRoute,
+    editRoute =
       # Reuse the createRoute for editing.
       path: '/' + collectionId + '/:_id/edit', controller: controller, template: formName,
       action: ->
@@ -83,5 +86,11 @@ Routes =
           data = Setter.merge({doc: collection.findOne(_id: @params._id)}, args.data, args.editData)
           args.onEditData?.call(@, data)
           return data
+
+    if Types.isObject(args.createRoute) then Setter.merge createRoute, args.createRoute
+    if Types.isObject(args.editRoute) then Setter.merge editRoute, args.editRoute
+
+    Router.route createRouteName, createRoute
+    Router.route editRouteName, editRoute
 
   getBaseController: -> BaseController
