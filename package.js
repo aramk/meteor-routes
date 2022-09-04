@@ -14,7 +14,7 @@ Package.onUse(function (api) {
     'reactive-var@1.0.5',
     'aramk:q@1.0.1',
     'iron:router@1.0.13',
-    'urbanetic:utility@2.0.0'
+    'urbanetic:utility@3.0.0'
   ], 'client');
   api.imply('iron:router');
   api.export('Routes', 'client');

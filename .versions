@@ -39,7 +39,7 @@ iron:middleware-stack@1.1.0
 iron:router@1.0.13
 iron:url@1.0.11
 jquery@1.11.8
-less@2.6.0
+less@4.0.0
 logging@1.0.12
 meteor@1.1.14
 minifier-js@1.1.11
@@ -65,6 +65,6 @@ templating-tools@1.0.4
 tracker@1.0.13
 ui@1.0.11
 underscore@1.0.8
-urbanetic:utility@2.0.0
+urbanetic:utility@3.0.0
 webapp@1.2.8
 webapp-hashing@1.0.9
